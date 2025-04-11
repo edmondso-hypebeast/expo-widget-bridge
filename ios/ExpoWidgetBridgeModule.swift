@@ -1,48 +1,61 @@
 import ExpoModulesCore
 
 public class ExpoWidgetBridgeModule: Module {
-  // Each module class must implement the definition function. The definition consists of components
-  // that describes the module's functionality and behavior.
-  // See https://docs.expo.dev/modules/module-api for more details about available components.
-  public func definition() -> ModuleDefinition {
-    // Sets the name of the module that JavaScript code will use to refer to the module. Takes a string as an argument.
-    // Can be inferred from module's class name, but it's recommended to set it explicitly for clarity.
-    // The module will be accessible from `requireNativeModule('ExpoWidgetBridge')` in JavaScript.
-    Name("ExpoWidgetBridge")
+    
+    public func definition() -> ModuleDefinition {
+        Name("ExpoWidgetBridge")
 
-    // Sets constant properties on the module. Can take a dictionary or a closure that returns a dictionary.
-    Constants([
-      "PI": Double.pi
-    ])
-
-    // Defines event names that the module can send to JavaScript.
-    Events("onChange")
-
-    // Defines a JavaScript synchronous function that runs the native code on the JavaScript thread.
-    Function("hello") {
-      return "Hello world! 👋"
-    }
-
-    // Defines a JavaScript function that always returns a Promise and whose native code
-    // is by default dispatched on the different thread than the JavaScript runtime runs on.
-    AsyncFunction("setValueAsync") { (value: String) in
-      // Send an event to JavaScript.
-      self.sendEvent("onChange", [
-        "value": value
-      ])
-    }
-
-    // Enables the module to be used as a native view. Definition components that are accepted as part of the
-    // view definition: Prop, Events.
-    View(ExpoWidgetBridgeView.self) {
-      // Defines a setter for the `url` prop.
-      Prop("url") { (view: ExpoWidgetBridgeView, url: URL) in
-        if view.webView.url != url {
-          view.webView.load(URLRequest(url: url))
+        AsyncFunction("setString") { (forKey: String, value: String, suiteName: String) in
+            let userDefaults = UserDefaults(suiteName: suiteName)
+            userDefaults?.set(value, forKey: forKey)
         }
-      }
-
-      Events("onLoad")
+        
+        AsyncFunction("setString") { (forKey: String, value: String, suiteName: String) in
+            let userDefaults = UserDefaults(suiteName: suiteName)
+            userDefaults?.set(value, forKey: forKey)
+        }
+        
+        AsyncFunction("setBool") { (forKey: String, value: Bool, suiteName: String) in
+            let userDefaults = UserDefaults(suiteName: suiteName)
+            userDefaults?.set(value, forKey: forKey)
+        }
+        
+        AsyncFunction("setArray") { (forKey: String, value: [Any], suiteName: String) in
+            let userDefaults = UserDefaults(suiteName: suiteName)
+            userDefaults?.set(value, forKey: forKey)
+        }
+        
+        AsyncFunction("setObject") { (forKey: String, value: [String: Any], suiteName: String) in
+            let userDefaults = UserDefaults(suiteName: suiteName)
+            userDefaults?.set(value, forKey: forKey)
+        }
+        
+        AsyncFunction("setNumber") { (forKey: String, value: Double, suiteName: String) in
+            let userDefaults = UserDefaults(suiteName: suiteName)
+            userDefaults?.set(value, forKey: forKey)
+        }
+        
+        AsyncFunction("get") { (forKey: String, suiteName: String) -> Any? in
+            let userDefaults = UserDefaults(suiteName: suiteName)
+            return userDefaults?.object(forKey: forKey)
+        }
+        
+        AsyncFunction("getAll") { (suiteName: String) -> [String : Any] in
+            let userDefaults = UserDefaults(suiteName: suiteName)
+            return userDefaults?.dictionaryRepresentation() ??  [:]
+        }
+        
+        AsyncFunction("remove") { (forKey: String, suiteName: String) in
+            let userDefaults = UserDefaults(suiteName: suiteName)
+            userDefaults?.removeObject(forKey: forKey)
+        }
+        
+        AsyncFunction("removeAll") { (suiteName: String) in
+            let userDefaults = UserDefaults(suiteName: suiteName)
+            userDefaults?.dictionaryRepresentation().forEach { (key: String, value: Any) in
+                userDefaults?.removeObject(forKey: key)
+            }
+        }
+        
     }
-  }
 }
