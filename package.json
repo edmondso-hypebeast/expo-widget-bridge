@@ -27,11 +27,11 @@
   "author": "edmondso <edmond.so@101medialab.com> (https://github.com/edmondso-hypebeast)",
   "license": "MIT",
   "homepage": "https://github.com/edmondso-hypebeast/expo-widget-bridge#readme",
-  "dependencies": {},
   "devDependencies": {
     "@types/react": "~18.3.12",
-    "expo-module-scripts": "^4.0.4",
     "expo": "~52.0.0",
+    "expo-module-scripts": "^4.0.4",
+    "expo-modules-core": "^2.2.3",
     "react-native": "0.76.0"
   },
   "peerDependencies": {
